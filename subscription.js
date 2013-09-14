@@ -15,9 +15,7 @@ exports.getSubscriptionSecret = function(email, callback) {
             createSubscriptionSecret(email, function(secret) {
                 callback(secret);
             });
-        }
-
-        else {
+        } else {
             callback(secret);
         }
     });
@@ -32,7 +30,7 @@ exports.checkSubscriptionSecret = function(email, providedSecret, callback) {
 };
 
 /*
-    Internal functions
+    Private functions
 */
 
 function createSubscriptionSecret(email, callback) {

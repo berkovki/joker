@@ -6,8 +6,8 @@
 
 var config = require('./config');
 
-/**
- *  Yemeksepeti related
+/*
+    Yemeksepeti related
  */
 
 exports.checkForJokerDeal = function(username, password, callback) {
@@ -84,8 +84,8 @@ function login(username, password, callback) {
     });
 }
 
-/**
- *  Phantom.js related
+/*
+    Phantom.js related
  */
 
 var ph;
