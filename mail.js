@@ -11,9 +11,9 @@ var config = require('./config'),
 exports.sendBatchNotification = function(emails, callback) {
     var batch = _.map(emails, function(email) {
         return {
-            From: config.email.from,
+            From: config.defaults.email.from,
             To: email,
-            Subject: config.email.subject,
+            Subject: config.defaults.email.subject,
             TextBody: 'Joker\'iniz hazır!'
         };
     });

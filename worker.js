@@ -14,14 +14,18 @@ var config = require('./config'),
     async = require('async');
 
 function Worker() {
-    this.job = new cronJob(config.settings.workerCronDate, function(){
-        this.batchCheckJoker();
+    var self = this;
+
+    this.job = new cron(config.settings.workerCronDate, function(){
+        self.batchCheckJoker();
     }, null, true, "Europe/Istanbul");
+    this.queue = [];
 }
 
 Worker.prototype.batchCheckJoker = function() {
     console.info('Started checking jokers');
 
+    var self = this;
     schema.User.find({}, function(err, users) {
         if (err) throw err;
 
@@ -29,7 +33,6 @@ Worker.prototype.batchCheckJoker = function() {
             Queue the joker check operations.
         */
 
-        var queue = [];
         _.each(users, function(user) {
             var operation = function(callback) {
                 console.info('Checking joker info for ' + user.email);
@@ -38,17 +41,21 @@ Worker.prototype.batchCheckJoker = function() {
                 });
             };
 
-            queue.push(operation);
+            self.queue.push(operation);
         });
 
         /*
             Run the queue.
         */
 
-        async.series(queue, function(err, results) {
+        async.series(self.queue, function(err, results) {
             if (err) throw err;
 
+            results = results.join('').split(''); // Hacky way of getting rid of null objects in the array.
+
             console.info('Finished checking for jokers, got ' + results.length + ' jokers.');
+
+            if (results.length <= 0) return;
 
             mail.sendBatchNotification(results, function(err, success) {
                 if (err) throw err;
@@ -58,4 +65,6 @@ Worker.prototype.batchCheckJoker = function() {
     });
 };
 
-module.exports = Worker;
+module.exports = function () {
+    return new Worker();
+}

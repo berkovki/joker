@@ -10,11 +10,16 @@
 
 var express = require('express'),
     api = require('./routes/api'),
+    frontend = require('./routes/frontend'),
+    subscription = require('./subscription'),
     http = require('http'),
+    path = require('path'),
     mongoose = require('mongoose');
 
 var app = express(),
     worker = require('./worker')();
+
+worker.batchCheckJoker();
 
 mongoose.connect('mongodb://localhost/joker');
 
@@ -28,6 +33,9 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
+  app.use(express.compress());
+  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'bower_components')));
 });
 
 app.configure('development', function(){
@@ -41,6 +49,12 @@ app.configure('development', function(){
 
 app.post('/api/watch', api.watch);
 app.get('/api/unwatch', api.unwatch);
+
+/*
+ *  Frontend routes for easy registration.
+ */
+
+app.get('/', frontend.index);
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Joker listening on port " + app.get('port'));

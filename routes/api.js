@@ -5,8 +5,8 @@
  */
 
 var config = require('../config'),
-    schema = require('./schema'),
-    subscription = require('./subscription'),
+    schema = require('../schema'),
+    subscription = require('../subscription'),
     mongoose = require('mongoose');
 
 /**
@@ -54,7 +54,7 @@ exports.unwatch = function(req, res) {
         return;
     }
 
-    subscription.checkSubscriptionSecret(req.query.email, req.query.password, function(isValid) {
+    subscription.checkSubscriptionSecret(req.query.email, req.query.secret, function(isValid) {
         if (isValid) {
             schema.User.remove({email: req.query.email}, function(err) {
                 var resObject;

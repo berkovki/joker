@@ -1,0 +1,28 @@
+doctype 5
+html
+    head
+    title Joker
+
+    link(rel='stylesheet', href='/bootstrap/dist/css/bootstrap.min.css', media='screen')
+
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    body
+        div.container(style='max-width: 500px')
+            div.header
+                h3.text-muted Joker
+
+            div.jumbotron
+                h1 Ucuz yemeği kaçırmayın.
+                p.lead Yemeksepeti'nde 15 dakika süren, çok cazip fiyatlara yemek sipariş edebildiğiniz joker indirimlerini kaçırmayın.
+                p
+                    form.signup-form
+                        input.form-control(type='text', placeholder='Email adresi', name='email', autofocus)
+                        input.form-control(type='text', placeholder='Yemeksepeti kullanıcı adı', name='username')
+                        input.form-control(type='password', placeholder='Yemeksepeti parolası', name='password')
+                        br
+                        button.signup-button.btn.btn-lg.btn-primary.btn-block(type='submit') İzlemeye başla
+
+        script(src='/jquery/jquery.js')
+        script(src='/bootstrap/dist/js/bootstrap.min.js')
+
+        script(src='/js/client.js')

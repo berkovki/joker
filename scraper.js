@@ -99,3 +99,13 @@ function phantom(callback) {
         });
     }
 }
+
+process.stdin.resume();
+
+process.on('SIGINT', function() {
+  console.log('Halting PhantomJS process...');
+  phantom(function(phantom) {
+      phantom.exit();
+      process.exit();
+  });
+});
