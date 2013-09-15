@@ -19,7 +19,7 @@ exports.checkForJokerDeal = function(username, password, callback) {
 
             setTimeout(function() {
                 page.evaluate(function() {
-                    var jokerEl = document.getElementById('UyariPopUpJokerHtml');
+                    var jokerEl = document.getElementById('PopupTableJokerBanner');
                     return (jokerEl.innerHTML && jokerEl.innerHTML.length > 0) ? true : false;
                 }, function(hasJoker) {
                     callback(null, hasJoker);
