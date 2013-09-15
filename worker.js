@@ -11,7 +11,8 @@ var config = require('./config'),
     cron = require('cron').CronJob,
     mongoose = require('mongoose'),
     _ = require('underscore'),
-    async = require('async');
+    async = require('async'),
+    colors = require('colors');
 
 function Worker() {
     var self = this;
@@ -27,6 +28,8 @@ Worker.prototype.batchCheckJoker = function() {
 
     var self = this;
     schema.User.find({}, function(err, users) {
+        console.log(('Got ' + users.length + ' users').yellow);
+
         if (err) throw err;
 
         /*
@@ -35,8 +38,11 @@ Worker.prototype.batchCheckJoker = function() {
 
         _.each(users, function(user) {
             var operation = function(callback) {
-                console.info('Checking joker info for ' + user.email);
+                console.info(('Checking joker info for ' + user.email).white);
                 scraper.checkForJokerDeal(user.yemeksepetiCredentials.username, user.yemeksepetiCredentials.password, function(err, hasJoker) {
+                    var log = 'Checked joker deal : ' + hasJoker + ' for user ' + user.email;
+                    console.log(hasJoker ? log.green : log.red);
+
                     callback(err, hasJoker ? user.email : null);
                 });
             };
@@ -51,16 +57,21 @@ Worker.prototype.batchCheckJoker = function() {
         async.series(self.queue, function(err, results) {
             if (err) throw err;
 
-            results = results.join('').split(''); // Hacky way of getting rid of null objects in the array.
-
-            console.info('Finished checking for jokers, got ' + results.length + ' jokers.');
-
-            if (results.length <= 0) return;
-
-            mail.sendBatchNotification(results, function(err, success) {
-                if (err) throw err;
-                console.info('Notifications sent to Postmark!');
+            var cleanedResults = [];
+            _.each(results, function(result) {
+                if (result) cleanedResults.push(result);
             });
+
+            console.info(('Finished checking for jokers, got ' + cleanedResults.length + ' jokers.').green);
+
+            if (cleanedResults.length <= 0) return;
+
+            mail.sendBatchNotification(cleanedResults, function(err, success) {
+                if (err) throw err;
+                console.info(('Notifications sent to Postmark!').blue);
+            });
+
+            self.queue.length = 0; // Clear the operation queue.
         });
     });
 };
