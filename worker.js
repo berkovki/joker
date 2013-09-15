@@ -30,7 +30,7 @@ Worker.prototype.batchCheckJoker = function() {
     schema.User.find({}, function(err, users) {
         console.log(('Got ' + users.length + ' users').yellow);
 
-        if (err) throw err;
+        if (err) console.error('Error checking joker : ' + err);
 
         /*
             Queue the joker check operations.
